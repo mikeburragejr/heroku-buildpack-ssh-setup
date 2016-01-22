@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+require 'base64'
+
+$stdout.sync = true
+
+build_dir = ARGV[0]
+cache_dir = ARGV[1]
+env_dir = ARGV[2]
+
+def ssh_dir
+	path = File.join ENV['HOME'], '.ssh'
+	Dir.mkdir(path, 0700) unless Dir.exist?(path)
+	return path
+end
+
+# Convert config variable SSH_SETUP_KNOWN_HOSTS to .ssh/known_hosts
+known_hosts_path = File.join env_dir, 'SSH_SETUP_KNOWN_HOSTS'
+if File.exist? known_hosts_path
+	known_hosts = File.read(known_hosts_path).split(/,/).map {|e| Base64.decode64(e).gsub(/\n/, '')}.join("\n")
+	puts '-----> Adding SSH known hosts from config variable SSH_SETUP_KNOWN_HOSTS'
+	out_path = File.join ssh_dir, 'known_hosts'
+	File.write out_path, known_hosts
+	puts "       Written to #{out_path}"
+	File.chmod 0600, out_path
+end
+
+# Convert config variable SSH_SETUP_KEY* to ssh keys
+# Format of the config variable is host,user,key
+key_paths = Dir[File.join(env_dir, 'SSH_SETUP_KEY*')].sort
+if !key_paths.empty?
+	config_path = File.join ssh_dir, 'config'
+	begin
+		file = File.open config_path, 'w', 0600
+		key_paths.each do |kp|
+			key_name = File.basename kp
+			puts "-----> Adding SSH key #{key_name}"
+			raw = File.read(kp).split(/,/, 3)
+			out_path = File.join(ssh_dir, key_name)
+			File.write out_path, Base64.decode64(raw[2])
+			puts "       Written to #{out_path}"
+			File.chmod 0600, out_path
+			file.puts "Host #{raw[0]}\n  User #{raw[1]}\n  IdentityFile #{out_path}\n"
+		end
+	ensure
+		file.chmod 0600
+		file.close
+	end
+end
+exit 0
