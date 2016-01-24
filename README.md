@@ -3,7 +3,7 @@ Heroku buildpack for setting up the SSH environment (keys, known hosts) before s
 
 This allows you to use private git repositories (and private servers) without having to checkin credentials.
 
-Commonly, this entails setting up a *deployment* user in your git server (or a [deploy key on github](https://github.com/blog/2024-read-only-deploy-keys)]), that has read-only access to some
+Commonly, this entails setting up a *deployment* user in your git server (or a [deploy key on github](https://github.com/blog/2024-read-only-deploy-keys)), that has read-only access to some
 repositories, and setting heroku config variables to contain the details of that user's SSH private keys.
 
 In this case, the private SSH keys of a read-only user are visible in heroku config for your project, but not
