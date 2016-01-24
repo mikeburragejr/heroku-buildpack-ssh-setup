@@ -35,5 +35,5 @@ heroku config:set SSH_SETUP_KEY_0=git.example.com,git,`base64 ~/.ssh/read_only_u
 ## Notes
 
 - Base64 is used for config variable encoding to keep the config variables to 1 line for ease of use with the heroku CLI commands.
-- SSH private keys added must not be password protected or the deployment will fail. Use "openssl rsa -in ~/.ssh/read_only_user_id_rsa -outform PEM" if need be.
+- SSH private keys added must not be password protected or the deployment will fail. Use `openssl rsa -in ~/.ssh/read_only_user_id_rsa -outform PEM` if need be.
 
