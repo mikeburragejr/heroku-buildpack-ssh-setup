@@ -1,5 +1,5 @@
 # heroku-buildpack-ssh-setup
-Heroku buildpack for setting up the SSH environment (keys, known hosts) before slug compilation (during deployment).
+Heroku buildpack for setting up the SSH environment (keys, known hosts) early during slug compilation (deployment), before accessing other SSH servers (git repositories, ruby gems, etc.).
 
 This allows you to use private git repositories (and private servers) without having to checkin credentials.
 
